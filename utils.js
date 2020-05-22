@@ -26,7 +26,7 @@ let search = async(query) => {
     const data = await ytsr(query, { limit: 10 })
 	console.log(data)
     data.items = data.items.map((item) => {
-        item['secs'] = get_duration_seconds(item['duration'])
+        if (item['type'] == 'video') item['secs'] = get_duration_seconds(item['duration'])
         return item
     })
     data.items = data.items.filter((item) => {
