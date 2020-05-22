@@ -24,6 +24,7 @@ let get_seconds_duration = (seconds) => {
 let search = async(query) => {
     logger.log(`search about "${query}"`)
     const data = await ytsr(query, { limit: 1 })
+	console.log(data)
     data.items = data.items.map((item) => {
         item['secs'] = get_duration_seconds(item['duration'])
         return item
