@@ -61,7 +61,7 @@ bot.on('message', async(message) => {
     handlers[command](message, args, bot).then(() => {
         logger.log(`############ End`)
     }).catch(err => {
-        console.log(err)
+        logger.log(err)
         logger.log(`############ End with error`)
     })
 
@@ -73,7 +73,7 @@ bot.on('messageReactionAdd', async(reaction, user) => {
         try {
             await reaction.fetch();
         } catch (error) {
-            console.log('Something went wrong when fetching the message: ', error);
+            logger.log('Something went wrong when fetching the message: ', error);
             // Return as `reaction.message.author` may be undefined/null
             return;
         }
@@ -91,6 +91,7 @@ bot.on('messageReactionAdd', async(reaction, user) => {
     //     console.log(value['username'])
     // }
     // console.log(reaction.message)
+    if (!reaction.message.embeds[0]) return
     const title = reaction.message.embeds[0]['title']
     const description = reaction.message.embeds[0]['description']
     const fields = reaction.message.embeds[0]['fields']

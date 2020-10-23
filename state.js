@@ -119,10 +119,12 @@ let get_current_info = (message) => {
 
 let get_next_info = (message) => {
     if (storage[message.guild.id].current + 1 <= storage[message.guild.id].queue.length - 1) { // nextable
-        if (storage[message.guild.id].loop == 0) storage[message.guild.id].current += 1
+        if (storage[message.guild.id].loop == 0 || storage[message.guild.id].loop == 1) storage[message.guild.id].current += 1
         return get_current_info(message)
     } else if (storage[message.guild.id].loop == 1) {
         storage[message.guild.id].current = 0
+        return get_current_info(message)
+    } else if (storage[message.guild.id].loop == 2) {
         return get_current_info(message)
     }
     return null
@@ -165,7 +167,8 @@ let save_session = async(message, name) => {
         name: name,
         queue: storage[message.guild.id].queue,
         current: storage[message.guild.id].current,
-        autoplay: storage[message.guild.id].autoplay
+        autoplay: storage[message.guild.id].autoplay,
+        loop: storage[message.guild.id].loop,
     })
 
     await session.save()
@@ -201,7 +204,8 @@ let load_session = async(message, session_name) => {
             dispatcher: null,
             volume: 1,
             current: session.current,
-            autoplay: session.autoplay
+            autoplay: session.autoplay,
+            loop: session.loop === undefined ? 0 : session.loop
         }
         return true
     } else return false
@@ -218,6 +222,7 @@ let update_session = async(message, session_name) => {
         session.queue = storage[message.guild.id].queue
         session.current = storage[message.guild.id].current
         session.autoplay = storage[message.guild.id].autoplay
+        session.loop = storage[message.guild.id].loop
         await session.save()
         return true
     } else return false
@@ -284,7 +289,7 @@ let play_current = async (message, callback = null, from=-1) => {
         // audio_url = await utils.audio_url(current_info.link);
         from = 0
     }
-    let dispatcher = await message.guild.voice.connection.play(audio_stream, { volume: 1, seek: from })
+    let dispatcher = await message.guild.voice.connection.play(audio_stream, { type: "opus", volume: 1, seek: from })
     dispatcher.from = from * 1000
     // set_current_audio_url(message, audio_url)
 

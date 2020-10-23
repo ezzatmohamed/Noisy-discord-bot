@@ -1,7 +1,5 @@
-const ytdl = require('ytdl-core')
-const ytsr = require('ytsr')
-const rp = require('request-promise'); /* Same as request , with promise support */
-const cheerio = require('cheerio');
+const ytdl = require('discord-ytdl-core')
+const ytsr = require('./ytsr').ytsr
 const logger = require('./logger')
 const embedColor = 0xCB0000
 const solenolyrics= require("solenolyrics")
@@ -24,7 +22,7 @@ let get_seconds_duration = (seconds) => {
 let search = async(query) => {
     logger.log(`search about "${query}"`)
     const data = await ytsr(query, { limit: 10 })
-	console.log(data)
+	// console.log(data)
     data.items = data.items.map((item) => {
         if (item['type'] == 'video') item['secs'] = get_duration_seconds(item['duration'])
         return item
@@ -49,14 +47,22 @@ let searchAll = async(query) => {
 let audio_url = async(url) => {
     logger.log(`get audio link "${url}"`)
     let info = await ytdl.getInfo(url)
-    let format = ytdl.chooseFormat(info.formats, { quality: 'highestaudio', filter: 'audioonly' })
+    let format = ytdl.chooseFormat(info.formats, {
+        filter: "audioonly",
+        opusEncoded: true,
+        encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+    })
         // console.log(format)
     return format.url
 }
 
 let audio_stream = (url) => {
     logger.log(`get audio stream "${url}"`)
-    return ytdl(url, { format: 'audioonly' })
+    return ytdl(url, {
+        filter: "audioonly",
+        opusEncoded: true,
+        encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+    })
 }
 
 let related_videos = async(url, exclude = []) => {
