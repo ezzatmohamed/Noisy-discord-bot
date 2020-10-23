@@ -48,9 +48,7 @@ let audio_url = async(url) => {
     logger.log(`get audio link "${url}"`)
     let info = await ytdl.getInfo(url)
     let format = ytdl.chooseFormat(info.formats, {
-        filter: "audioonly",
-        opusEncoded: true,
-        encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+        filter: "audioonly"
     })
         // console.log(format)
     return format.url
@@ -59,9 +57,7 @@ let audio_url = async(url) => {
 let audio_stream = (url) => {
     logger.log(`get audio stream "${url}"`)
     return ytdl(url, {
-        filter: "audioonly",
-        opusEncoded: true,
-        encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
+        filter: "audioonly"
     })
 }
 
