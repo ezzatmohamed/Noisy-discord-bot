@@ -55,7 +55,7 @@ let set_player = (message, dispatcher, volume) => {
 }
 
 let add_song = (message, video_info) => {
-
+    if (video_info == null) return
     storage[message.guild.id].queue.push(video_info)
     if (debug) console.log(storage)
 }
