@@ -289,7 +289,7 @@ let play_current = async (message, callback = null, from=-1) => {
         // audio_url = await utils.audio_url(current_info.link);
         from = 0
     }
-    let dispatcher = await message.guild.voice.connection.play(audio_stream, { volume: 1, seek: from })
+    let dispatcher = await message.guild.voice.connection.play(audio_stream, { type: "opus", volume: 1, seek: from })
     dispatcher.from = from * 1000
     // set_current_audio_url(message, audio_url)
 
