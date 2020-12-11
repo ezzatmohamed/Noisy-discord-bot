@@ -93,5 +93,4 @@ mongoose.connect(DB_URL, {
 }).then(() => {
     bot.login(TOKEN)
 }).catch(error => {
-
 })
