@@ -17,9 +17,9 @@
     "request-promise": "^4.2.6",
     "solenolyrics": "^5.0.0",
     "urllib": "^2.36.1",
+    "ytdl-core": "^4.0.3",
     "ytsr": "^1.0.4"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

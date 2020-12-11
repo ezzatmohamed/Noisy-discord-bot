@@ -15,23 +15,18 @@ let ScrollQueue = async(message, bot, emoji) => {
 
     let LastSong = emoji == '⬆️' ? Songs[0] : Songs[Songs.length - 1]
     let LastSongNumber = ""
-    console.log(LastSong)
-
     if (LastSong.substring(0, 2) == '🎧') {
         LastSong = LastSong.substring(5, LastSong.length)
     }
 
     for (let i = 0; i < LastSong.length && LastSong[i] != ')'; i++)
         LastSongNumber += LastSong[i]
-    console.log(LastSongNumber)
     let idx = Number(LastSongNumber) - 1
-    console.log(idx)
+
     if (isNaN(idx)) {
-        console.log("Song number Error")
         return
     }
     if ((idx >= queue.length - 1 && emoji == '⬇️') || idx <= 0) {
-        console.log("No queue found")
         return
     }
 
@@ -45,8 +40,7 @@ let ScrollQueue = async(message, bot, emoji) => {
         start = idx + 1
         end = start + 10 < queue.length ? start + 10 : queue.length;
     }
-    console.log(start)
-    console.log(end)
+
     let mssg = "";
 
     let count = start + 1

@@ -1,6 +1,6 @@
 const ytdl = require('discord-ytdl-core')
 const ytsr = require('./ytsr').ytsr
-const logger = require('./logger')
+// const logger = require('./logger')
 const embedColor = 0xCB0000
 const solenolyrics= require("solenolyrics")
 
@@ -20,9 +20,9 @@ let get_seconds_duration = (seconds) => {
 }
 
 let search = async(query) => {
-    logger.log(`search about "${query}"`)
+    // logger.log(`search about "${query}"`)
     const data = await ytsr(query, { limit: 10 })
-	// console.log(data)
+
     data.items = data.items.map((item) => {
         if (item['type'] == 'video') item['secs'] = get_duration_seconds(item['duration'])
         return item
@@ -35,7 +35,7 @@ let search = async(query) => {
 }
 
 let searchAll = async(query) => {
-    logger.log(`search all about "${query}"`)
+    // logger.log(`search all about "${query}"`)
     const data = await ytsr(query, { limit: 10, type: 'video' })
     data.items = data.items.filter((item) => {
         return item['type'] == 'video';
@@ -45,19 +45,19 @@ let searchAll = async(query) => {
 }
 
 let audio_url = async(url) => {
-    logger.log(`get audio link "${url}"`)
+    // logger.log(`get audio link "${url}"`)
     let info = await ytdl.getInfo(url)
     let format = ytdl.chooseFormat(info.formats, {
         filter: "audioonly",
         opusEncoded: true,
         encoderArgs: ['-af', 'bass=g=10,dynaudnorm=f=200']
     })
-        // console.log(format)
+
     return format.url
 }
 
 let audio_stream = (url) => {
-    logger.log(`get audio stream "${url}"`)
+    // logger.log(`get audio stream "${url}"`)
     return ytdl(url, {
         filter: "audioonly",
         opusEncoded: true,
@@ -66,7 +66,7 @@ let audio_stream = (url) => {
 }
 
 let related_videos = async(url, exclude = []) => {
-    logger.log(`get related videos "${url}" exclude ${exclude.length}`)
+    // logger.log(`get related videos "${url}" exclude ${exclude.length}`)
     let info = await ytdl.getInfo(url)
     let related_videos = info.related_videos
     let related_videos_urls = []
@@ -76,11 +76,11 @@ let related_videos = async(url, exclude = []) => {
         if (!exclude.includes(video_url))
             related_videos_urls.push(video_url)
     }
-    logger.log(`get related videos "${url}" ${related_videos_urls.length} found`)
+    // logger.log(`get related videos "${url}" ${related_videos_urls.length} found`)
     return related_videos_urls
 }
 let get_lyrics = async(song) => {
-    logger.log(`get lyrics "${song}"`)
+    // logger.log(`get lyrics "${song}"`)
 
     let lyrics = await solenolyrics.requestLyricsFor(encodeURI(song))
 

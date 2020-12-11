@@ -10,7 +10,7 @@ module.exports = async (message, args, bot, verbose = true) => {
 
             await message.guild.voice.setSelfDeaf(true)
 
-            logger.log(`join "${message.guild.name}#${message.guild.id}"`)
+            // logger.log(`join "${message.guild.name}#${message.guild.id}"`)
 
             if (verbose) {
                 await message.channel.send({ embed: utils.formatted_mssg('Hello') }).then((msg) => {

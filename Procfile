@@ -1,1 +1,1 @@
-worker: node bot.js
+worker: npm update && node bot.js

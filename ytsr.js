@@ -52,5 +52,4 @@ module.exports = {
     ytsr
 }
 ;
-// (async () => console.log(await ytsr('faded', { limit: 10 })))()
 

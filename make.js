@@ -133,10 +133,10 @@
 // lyrics find قصاد عيني
 
 
-const solenolyrics= require("solenolyrics")
-solenolyrics.requestLyricsFor(encodeURI(`بنخاف`)).then(lyrics => {
-    console.log(lyrics)
-})
+// const solenolyrics= require("solenolyrics")
+// solenolyrics.requestLyricsFor(encodeURI(`بنخاف`)).then(lyrics => {
+//     console.log(lyrics)
+// })
 
 // transliteration.transliterate('دورك جاي')
 

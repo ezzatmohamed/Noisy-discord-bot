@@ -60,14 +60,14 @@ module.exports = async (message, args, bot) => {
             switch (reaction.emoji.name) {
                 case '⬆️':
                     page = Math.max(0, page - 1)
-                    console.log(page)
+
                     field = {}
                     field[`${args} page ${page + 1} / ${lyrics_pages.length}`] = lyrics_pages[page]
                     msg.edit({ embed: utils.formatted_mssg(`Lyrics`, field) })
                     break
                 case '⬇️':
                     page = Math.min(page + 1, lyrics_pages.length - 1)
-                    console.log(page)
+      
                     field = {}
                     field[`${args} page ${page + 1} / ${lyrics_pages.length}`] = lyrics_pages[page]
                     msg.edit({ embed: utils.formatted_mssg(`Lyrics`, field) })

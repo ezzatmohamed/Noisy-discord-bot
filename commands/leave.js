@@ -9,7 +9,7 @@ module.exports = async (message, args, bot) => {
     } else {
         await message.guild.voice.connection.disconnect();
         await message.channel.send({ embed: utils.formatted_mssg('Bye!') });
-        logger.log(`leave "${message.guild.name}#${message.guild.id}"`)
+        // logger.log(`leave "${message.guild.name}#${message.guild.id}"`)
         state.remove_song_message(message)
         state.remove_server(message);
     }

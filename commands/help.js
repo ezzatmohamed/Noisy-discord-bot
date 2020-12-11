@@ -41,9 +41,6 @@ module.exports = async(message, args, bot) => {
 
     commands.forEach(Element => {
 
-        // console.log(Element)
-
-        // console.log(commands)
         command = Element[0]
         details = Element[1]
 
