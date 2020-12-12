@@ -6,15 +6,19 @@ const mongoose = require('mongoose')
 const TOKEN = process.env.TOKEN
 const PREFIX = process.env.PREFIX
 const DB_URL = process.env.DB_URL
+const path = require('path')
+const glob = require('glob')
 
-handlers = {}
-let commands_path = require("path").join(__dirname, "commands");
-
-require("fs").readdirSync(commands_path).forEach(function(file) {
-    let command = file.substring(0, file.lastIndexOf('.'))
-    if (command.startsWith('test') && process.env.DEV != '1') return
-    handlers[command] = require('./commands/' + file)
+let handlers = {}
+glob('commands/**/*.js',(err,files)=>{
+    files.forEach(file=>{
+        let fileWithoutPath = path.basename(file)
+        let command = fileWithoutPath.substring(0, fileWithoutPath.lastIndexOf('.'))
+        if (command.startsWith('test') && process.env.DEV != '1') return
+        handlers[command] = require('./'+file)
+    })
 })
+
 
 
 bot.on('ready', () => {})
