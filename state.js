@@ -283,13 +283,12 @@ let play_current = async (message, callback = null, from=-1) => {
     if (!current_info) return
 
     let audio_stream = utils.audio_stream(current_info.link)
-    // let audio_url
-    // if (from != -1 && current_info.audio_url) audio_url = current_info.audio_url
+
+
     if (from == -1) {
-        // audio_url = await utils.audio_url(current_info.link);
+
         from = 0
     }
-    console.log(from)
     let dispatcher = await message.guild.voice.connection.play(audio_stream, { type: "opus", volume: 1, seek: from })
     dispatcher.from = from * 1000
     // set_current_audio_url(message, audio_url)
@@ -381,6 +380,22 @@ let set_now_playing_mssg = (message, now_playing_mssg) => {
     storage[message.guild.id].now_playing_mssg = now_playing_mssg
 }
 
+let play_radio =  async (message,radioStreamLink ,callback = null) => {
+
+    if (state.get_player(message).dispatcher != null) {
+        state.get_player(message).dispatcher.destroy();
+        delete state.get_player(message).dispatcher;
+        state.set_player(message, null, 1);
+    }
+    let dispatcher = await message.guild.voice.connection.play(radioStreamLink)
+    
+    state.set_player(message, dispatcher, 1);
+    dispatcher.on("finish", () => {
+        state.set_player(message, null, 1);
+    
+    });
+}
+
 initialize()
 
 module.exports = {
@@ -421,5 +436,6 @@ module.exports = {
     fastforward,
     set_song_message,
     remove_song_message,
-    set_now_playing_mssg
+    set_now_playing_mssg,
+    play_radio
 }
