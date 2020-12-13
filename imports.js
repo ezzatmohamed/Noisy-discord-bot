@@ -10,13 +10,12 @@ modules = {
     embedColor
 }
 
-glob('commands/**/*.js',(err,files)=>{
-    files.forEach(file=>{
-        let fileWithoutPath = path.basename(file)
-        let command = fileWithoutPath.substring(0, fileWithoutPath.lastIndexOf('.'))
-        if (command.startsWith('test') && process.env.DEV != '1') return
-        modules[command] = require('./'+file)
-    })
+glob.sync('commands/**/*.js').map(file=>{
+    let fileWithoutPath = path.basename(file)
+    let command = fileWithoutPath.substring(0, fileWithoutPath.lastIndexOf('.'))
+    if (command.startsWith('test') && process.env.DEV != '1') return
+    modules[command] = require('./'+file)
+  
 })
 
 module.exports = modules

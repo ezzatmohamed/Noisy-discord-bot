@@ -10,14 +10,14 @@ const path = require('path')
 const glob = require('glob')
 
 let handlers = {}
-glob('commands/**/*.js',(err,files)=>{
-    files.forEach(file=>{
-        let fileWithoutPath = path.basename(file)
-        let command = fileWithoutPath.substring(0, fileWithoutPath.lastIndexOf('.'))
-        if (command.startsWith('test') && process.env.DEV != '1') return
-        handlers[command] = require('./'+file)
-    })
+glob.sync('commands/**/*.js').map(file =>{
+    
+    let fileWithoutPath = path.basename(file)
+    let command = fileWithoutPath.substring(0, fileWithoutPath.lastIndexOf('.'))
+    if (command.startsWith('test') && process.env.DEV != '1') return
+    handlers[command] = require('./'+file)
 })
+
 
 
 

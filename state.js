@@ -364,7 +364,9 @@ let set_song_message = (message, mssg, interval) => {
 }
 
 let remove_song_message = (message) => {
-    if (storage[message.guild.id].song_message) storage[message.guild.id].song_message.delete()
+    if(storage[message.guild.id] === undefined)
+        return
+    if (storage[message.guild.id] && storage[message.guild.id].song_message) storage[message.guild.id].song_message.delete()
     if (storage[message.guild.id].interval) clearInterval(storage[message.guild.id].interval)
 
     delete storage[message.guild.id].song_message

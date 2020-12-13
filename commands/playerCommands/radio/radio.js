@@ -1,5 +1,3 @@
-
-console.log('imported')
 const imports = require('../../../imports')
 Object.keys(imports).forEach(key => {
     global[key] = imports[key]
@@ -14,8 +12,8 @@ const radio_channels = {
 
 const channelsName = [
 
-    {name:'2- nogomFM',value:".radio nogom"},
-    {name:'1- naghamFM',value:".radio nagham"},
+    {name:'1- nogomFM',value:".radio nogom"},
+    {name:'2- naghamFM',value:".radio nagham"},
     {name:'3- nileFM',value:".radio nile"},
     {name:'4- radioMASR',value:".radio masr"},
 
