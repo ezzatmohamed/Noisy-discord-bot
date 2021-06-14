@@ -20,6 +20,7 @@
     "solenolyrics": "^5.0.0",
     "urllib": "^2.36.1",
     "ytdl-core": "^4.0.3",
+    "ytpl": "^2.2.1",
     "ytsr": "*"
   },
   "scripts": {
