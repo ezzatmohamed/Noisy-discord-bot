@@ -1,5 +1,5 @@
 const ytdl = require('discord-ytdl-core')
-const ytsr = require('./ytsr').ytsr
+const ytsr = require('ytsr')
 // const logger = require('./logger')
 const embedColor = 0xCB0000
 const solenolyrics= require("solenolyrics")
@@ -22,7 +22,7 @@ let get_seconds_duration = (seconds) => {
 let search = async(query) => {
     // logger.log(`search about "${query}"`)
     const data = await ytsr(query, { limit: 10 })
-
+    
     data.items = data.items.map((item) => {
         if (item['type'] == 'video') item['secs'] = get_duration_seconds(item['duration'])
         return item
@@ -81,7 +81,7 @@ let related_videos = async(url, exclude = []) => {
 }
 let get_lyrics = async(song) => {
     // logger.log(`get lyrics "${song}"`)
-
+    
     let lyrics = await solenolyrics.requestLyricsFor(encodeURI(song))
 
     return lyrics;

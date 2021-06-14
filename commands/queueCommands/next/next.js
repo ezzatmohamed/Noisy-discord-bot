@@ -4,7 +4,7 @@ Object.keys(imports).forEach(key => {
 })
 
 module.exports = async (message, args, bot) => {
-    const old_url = state.get_current_info(message).link;
+    const old_url = state.get_current_info(message).url;
     let song_info = state.get_next_info(message);
 
     state.remove_song_message(message)

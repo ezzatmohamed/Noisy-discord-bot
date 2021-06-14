@@ -8,7 +8,7 @@ module.exports = async (message, args, bot) => {
 
     if (queue.length == 0) return await message.channel.send({ embed: utils.formatted_mssg(`The queue is empty!`) });
 
-    const old_url = queue[queue.length - 1].link
+    const old_url = queue[queue.length - 1].url
 
     if (!state.get_autoplay(message)) return await message.channel.send({ embed: utils.formatted_mssg(`Autoplay is off`) });
 

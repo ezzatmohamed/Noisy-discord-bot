@@ -92,7 +92,7 @@ let clear_queue = (message) => {
 
 let get_queue_urls = (message) => {
     return storage[message.guild.id].queue.map(video_info => {
-        return video_info.link
+        return video_info.url
     })
 }
 
@@ -282,7 +282,7 @@ let play_current = async (message, callback = null, from=-1) => {
 
     if (!current_info) return
 
-    let audio_stream = utils.audio_stream(current_info.link)
+    let audio_stream = utils.audio_stream(current_info.url)
 
 
     if (from == -1) {
@@ -354,7 +354,7 @@ let fastforward = (message, secs, callback) => {
     let now = ((new Date()).getTime() - dispatcher.startTime - dispatcher._pausedTime + dispatcher.from) / 1000
 
     now = Math.min(current_info.secs, now + secs)
-
+    
     if (now != current_info.secs) play_current(message, callback, now)
 }
 
