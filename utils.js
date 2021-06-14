@@ -33,6 +33,7 @@ let search = async(query) => {
         return {
             "title": item.title,
             "url": item.url,
+            "duration": item.duration,
             "secs": secs
         }
     })
