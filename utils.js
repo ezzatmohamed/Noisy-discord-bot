@@ -22,15 +22,23 @@ let get_seconds_duration = (seconds) => {
 let search = async(query) => {
     // logger.log(`search about "${query}"`)
     const data = await ytsr(query, { limit: 10 })
-    
-    data.items = data.items.map((item) => {
-        if (item['type'] == 'video') item['secs'] = get_duration_seconds(item['duration'])
-        return item
-    })
+
     data.items = data.items.filter((item) => {
         return item['type'] == 'video';
     })
+
+    data.items = data.items.map((item) => {
+
+        let secs = get_duration_seconds(item['duration'])
+        return {
+            "title": item.title,
+            "url": item.url,
+            "secs": secs
+        }
+    })
+    
     if (data.items.length === 0) return null
+
     return data.items[0]
 }
 
