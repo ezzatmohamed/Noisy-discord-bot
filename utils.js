@@ -1,5 +1,7 @@
 const ytdl = require('discord-ytdl-core')
 const ytsr = require('ytsr')
+const resolvers = require('./resolvers')
+
 // const logger = require('./logger')
 const embedColor = 0xCB0000
 const solenolyrics= require("solenolyrics")
@@ -22,25 +24,15 @@ let get_seconds_duration = (seconds) => {
 let search = async(query) => {
     // logger.log(`search about "${query}"`)
     const data = await ytsr(query, { limit: 10 })
+    try {
+        valid_item = await resolvers.resolveYtsrResult(data.items)
+        
+    } catch (error) {
+        console.log(error)
+    }
+    if (!valid_item) return null
 
-    data.items = data.items.filter((item) => {
-        return item['type'] == 'video';
-    })
-
-    data.items = data.items.map((item) => {
-
-        let secs = get_duration_seconds(item['duration'])
-        return {
-            "title": item.title,
-            "url": item.url,
-            "duration": item.duration,
-            "secs": secs
-        }
-    })
-    
-    if (data.items.length === 0) return null
-
-    return data.items[0]
+    return valid_item
 }
 
 let searchAll = async(query) => {
