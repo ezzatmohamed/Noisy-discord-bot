@@ -35,7 +35,7 @@ let resolveVideo = (video) => {
 }
 
 let resolvePlaylist = async (playlist) => {
-    const tracks = await ytpl(playlist.url, {limit: 50});
+    const tracks = await ytpl(playlist.url, {limit: 100});
     const resolved_tracks = tracks.items.map(track => {
         return resolveVideo(track)
     });

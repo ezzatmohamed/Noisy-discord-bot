@@ -5,6 +5,8 @@ Object.keys(imports).forEach(key => {
 
 module.exports = async (message, args, bot, verbose = true) => {
     
+    await message.channel.send({ embed: utils.formatted_mssg(`This command is under maintenance`) })
+    return 
     if (isNaN(Number(args))) await message.channel.send({ embed: utils.formatted_mssg(`Invalid seconds`) })
 
     state.fastforward(message, Number(args), () => {
