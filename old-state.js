@@ -1,5 +1,5 @@
 const Session = require('./Session')
-const utils = require('./utils')
+const utils = require('./old-utils')
 
 let storage = {}
 let debug = false
