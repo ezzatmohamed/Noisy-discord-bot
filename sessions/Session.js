@@ -13,10 +13,11 @@ class Session {
         if (this.voice && voice_channel.id === this.voice.id) return
         if (!voice_channel) return
         
-        await voice_channel.join()
+        const connection = await voice_channel.join()
         await voice_channel.guild.voice.setSelfDeaf(true)
 
         this.voice = voice_channel
+        this.voice.connection = connection
     }
 
     /**
@@ -37,7 +38,7 @@ class Session {
      */
     getPlayer() {
         if (this.player) return this.player
-        this.player = new Player(this.bot)
+        this.player = new Player(this.bot, this)
         return this.player
     }
 

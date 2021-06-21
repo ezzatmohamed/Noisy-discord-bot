@@ -5,11 +5,12 @@ const YoutubeAdapter = require('../../adaptors/youtube')
 const youtube_adapter = new YoutubeAdapter()
 
 class Player {
-    constructor(bot, queue=[], current=0, autoplay=true) {
+    constructor(bot, session, queue=[], current=0, autoplay=true) {
         this.bot = bot
         this.queue = Queue.createQueue(queue)
         this.current = current
         this.autoplay = autoplay
+        this.session = session
     }
 
     convertToSongs(message, songs_info) {
@@ -32,6 +33,12 @@ class Player {
         let songs = await this.getSongs(message, query)
         songs.forEach(song => this.queue.add(song))
         return songs
+    }
+
+    async start(song_idx=0) {
+        if (song_idx < 0 || song_idx >= this.queue.queue.length) return false
+        this.session.voice.connection.play(await youtube_adapter.getStream(this.queue.queue[song_idx].url), { type: 'opus' })
+        return true
     }
 }
 
