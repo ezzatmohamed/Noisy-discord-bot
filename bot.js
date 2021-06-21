@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('./defines')
 const db = require('./database')
 
 const Discord = require('discord.js')
@@ -10,6 +11,7 @@ const MessagesController = require('./messages')
  * * Create the bot
  */
 const bot = new Discord.Client()
+require('discord-buttons')(bot)
 bot.MessagesController = new MessagesController(bot)
 bot.SessionsController = new SessionsController(bot)
 bot.CommandsController = new CommandsController(bot)

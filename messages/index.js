@@ -1,3 +1,5 @@
+const Message = require('./Message')
+
 class MessagesController {
     constructor(bot) {
         this.bot = bot
@@ -22,30 +24,8 @@ class MessagesController {
             const session = this.bot.SessionsController.getSession(message)
             this.bot.CommandsController.handle(message, command, args, session)
         })
-    }
 
-    /**
-     * * edit existing message
-     */
-    async edit(message, mssg_text) {
-        return await message.edit(mssg_text)
-    }
-
-    /**
-     * * send normal message
-     */
-    async send(channel, mssg_text) {
-        if (!mssg_text) return
-        const message = await channel.send(mssg_text)
-        return message
-    }
-
-    /**
-     * * send list
-     */
-    async sendList(channel, list) {
-        const message = await channel.send(list)
-        return message
+        this.Message = Message
     }
 }
 

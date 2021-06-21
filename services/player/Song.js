@@ -12,11 +12,12 @@ class Song {
         this.duration = song_info.duration
         this.ago = song_info.ago
         this.views = song_info.views
+        this.added_by = song_info.added_by
     }
 
-    static async create(url, song_info) {
+    static async create(song_info) {
         try {
-            song_info = song_info ? song_info : await youtube_adapter.videoInfo(url)
+            song_info = song_info.id ? song_info : {...song_info, ...(await youtube_adapter.videoInfo(song_info.url))}
             return new Song(song_info)
         } catch (_) {
             return undefined

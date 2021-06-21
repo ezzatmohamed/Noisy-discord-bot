@@ -10,7 +10,7 @@ class SessionsController {
      * * init a session
      */
     initSession(message) {
-        this.sessions[message.guild.id] = new Session(message.guild.id)
+        this.sessions[message.guild.id] = new Session(this.bot, message.guild.id)
         return this.sessions[message.guild.id]
     }
 
