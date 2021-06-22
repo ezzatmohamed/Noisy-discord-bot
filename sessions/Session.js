@@ -1,4 +1,5 @@
 const Player = require('../services/player')
+const TicTacToe = require('../services/tic-tac-toe')
 
 class Session {
     constructor(bot, guild_id) {
@@ -48,6 +49,14 @@ class Session {
     terminatePlayer() {
         if (this.player) delete this.player
         return true
+    }
+
+    /**
+     * * start player service
+     */
+    createTicTacToe(player_one, player_two,difficulty) {
+        const tic_tac_toe = new TicTacToe(this.bot, this, player_one, player_two, difficulty)
+        return tic_tac_toe
     }
 }
 

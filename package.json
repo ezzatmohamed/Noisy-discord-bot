@@ -16,6 +16,7 @@
     "mongoose": "^5.10.10",
     "opusscript": "0.0.7",
     "path": "^0.12.7",
+    "prompt-sync": "^4.2.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "solenolyrics": "^5.0.0",

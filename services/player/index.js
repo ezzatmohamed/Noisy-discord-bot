@@ -37,8 +37,12 @@ class Player {
 
     async start(song_idx=0) {
         if (song_idx < 0 || song_idx >= this.queue.queue.length) return false
-        this.session.voice.connection.play(await youtube_adapter.getStream(this.queue.queue[song_idx].url), { type: 'opus' })
-        return true
+        const stream = await youtube_adapter.getStream(this.queue.queue[song_idx].url)
+        if (stream) {
+            this.session.voice.connection.play(stream, { type: 'opus' })
+            return true
+        }
+        return false
     }
 }
 

@@ -40,12 +40,15 @@ class Queue extends EventEmitter {
     }
 
     getEmbed(page_idx=-1) {
-        return Queue.createEmbed(this.queue,
-            `Queue ${this.name || '[Unnamed]'}`, 
-            `page ${page_idx + 1}/${pages.length} | #${current + 1} now playing\n⠀`, 
+        const res = Queue.createEmbed(this.queue,
+            '', 
+            '', 
             this.current,
             page_idx
         )
+        res.embed = res.embed.setTitle(`Queue ${this.name || '[Unnamed]'}`)
+        res.embed = res.embed.setDescription(`page ${page_idx + 1}/${res.num_pages} | #${this.current + 1} now playing\n⠀`)
+        return res
     }
 
     static createEmbed(queue, title, description, current, page_idx, added_by=true) {

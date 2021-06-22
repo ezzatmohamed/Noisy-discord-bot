@@ -40,7 +40,7 @@ module.exports = {
             buttons.components[4].disabled = !(page_idx != num_pages - 1)
             
             if (embed) 
-                queue_message.setContent({ embed, component: buttons })
+                queue_message.setContent({ embed, component: [buttons] })
             else
                 queue_message.setContent({
                     type: 'danger',

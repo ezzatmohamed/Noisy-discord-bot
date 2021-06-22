@@ -9,54 +9,38 @@ class Message {
     }
 
     setContent(params) {
-        this.params = this.format(params)
+        this.params = params
         this.had_component = this.had_component || this.params.component
-        this.content = this.createEmbed()
-    }
-
-    format(params) {
-        return params.embed ? {
-            type: params.type || 'primary',
-            embed: params.embed,
-            component: params.component || undefined
-        } : {
-            type: params.type || 'primary',
-            title: params.title || undefined, // || '\u200B',
-            url: params.url || undefined,
-            description: params.description || undefined,
-            thumbnail: params.thumbnail || undefined,
-            footer: params.footer || {
-                title: undefined,
-                image: undefined
-            },
-            component: params.component
-        }
+        const temp_embed = this.createEmbed()
+        this.content = temp_embed || this.params.content
     }
 
     createEmbed() {
         if (this.params.embed) return this.params.embed.setColor(this.getColor(this.params.type))
+        if (!this.params.title && !this.params.description && !this.params.thumbnail && !this.params.footer) return undefined
         let embed = new MessageEmbed()
             .setColor(this.getColor(this.params.type))
         if (this.params.title) embed = embed.setTitle(this.params.title)
         if (this.params.url) embed = embed.setURL(this.params.url)
         if (this.params.description) embed = embed.setDescription(this.params.description)
         if (this.params.thumbnail) embed = embed.setThumbnail(this.params.thumbnail)
-        if (this.params.footer.title || this.params.footer.image) embed = embed.setFooter(this.params.footer.title || '\u200B', this.params.footer.image)
+        if (this.params.footer && (this.params.footer.title || this.params.footer.image)) embed = embed.setFooter(this.params.footer.title || '\u200B', this.params.footer.image)
         return embed
     }
     
     getFullContent() {
         return this.params.component || this.had_component ?
             this.content instanceof MessageEmbed ? 
-                {content: '⠀', embed: this.content, component: this.params.component} 
-                : { content: this.content, component: this.params.component }
+                {content: this.params.content || '⠀', embed: this.content, components: this.params.component} 
+                : { content: this.content, components: this.params.component }
             : this.content
     }
 
     async edit(params) {
         this.setContent(params)
         if (!this.message) return await this.send()
-        await this.message.edit(this.getFullContent())
+        const full_content = this.getFullContent()
+        await this.message.edit(full_content.content, full_content)
         return this.message
     }
 
