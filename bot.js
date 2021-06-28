@@ -10,6 +10,7 @@ const MessagesController = require('./messages')
 /**
  * * Create the bot
  */
+require('discord-reply')
 const bot = new Discord.Client()
 require('discord-buttons')(bot)
 bot.MessagesController = new MessagesController(bot)

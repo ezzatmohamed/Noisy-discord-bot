@@ -54,8 +54,8 @@ class Session {
     /**
      * * start player service
      */
-    createTicTacToe(player_one, player_two,difficulty) {
-        const tic_tac_toe = new TicTacToe(this.bot, this, player_one, player_two, difficulty)
+    createTicTacToe(player_one, player_two, difficulty, board_size=3) {
+        const tic_tac_toe = new TicTacToe(this.bot, this, player_one, player_two, difficulty, board_size)
         return tic_tac_toe
     }
 }

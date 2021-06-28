@@ -1,16 +1,24 @@
 const { MessageActionRow, MessageButton } = require('discord-buttons')
-const delay = time => new Promise(res=>setTimeout(res,time))
+// const delay = time => new Promise(res=>setTimeout(res,time))
 
 module.exports = {
     name: ['xo'],
 
     handler: async (message, args, session, bot, verbose=true) => {
 
-        let opponent = /.*<@!(\d{18})>.*/.exec(args)
+        let opponent = /\b<@!(\d{18})>\b/.exec(args)
         opponent = opponent ? opponent[1] : 'ai'
 
+        let board_size = /\b(\d+)\b/.exec(args)
+        board_size = board_size ? parseInt(board_size[1]) : 3
+        
+        // TODO: variable board size (larger than 3 the ai engine hangs out)
+        if (board_size < 3 || board_size > 3) {
+            return await message.lineReply('Invalid board size')
+        }
+
         difficulty = /.*medium.*/.exec(args) ? 'medium' : 'hard'
-        const game = session.createTicTacToe(message.author.id, opponent, difficulty)
+        let game = session.createTicTacToe(message.author.id, opponent, difficulty, board_size)
 
         /**
          * * Initialize the buttons
@@ -65,8 +73,8 @@ module.exports = {
 
             await update_game_message()
             
-            if (!game.result && game.isAITurn()) {
-                await delay(1000)
+            if (game && !game.result && game.isAITurn()) {
+                // await delay(1000)
                 game.play()
             }
 

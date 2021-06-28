@@ -1,11 +1,11 @@
 const { EventEmitter } = require('events')
 
 class TicTacToe extends EventEmitter{
-    constructor(bot, session, player_one, player_two, difficulty) {
+    constructor(bot, session, player_one, player_two, difficulty, board_size=3) {
         super()
         this.bot = bot
         this.session = session
-        this.board = Array(3).fill().map(() => Array(3).fill(' '))
+        this.board = Array(board_size).fill().map(() => Array(board_size).fill(' '))
         this.turn = Math.floor(Math.random() * 2) === 0 ? 'X' : 'O'
         this.player_one_symbol = Math.floor(Math.random() * 2) === 0 ? 'X' : 'O'
         this.player_two_symbol = this.player_one_symbol === 'O' ? 'X' : 'O'
