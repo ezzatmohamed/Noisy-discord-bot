@@ -27,7 +27,7 @@ module.exports = {
             .addComponent(next_page_button)
             .addComponent(last_page_button)
         
-        const queue_message = new bot.MessagesController.Message(message.channel, {})
+        const queue_message = new bot.MessagesController.Message(message.channel, {}, message)
 
         const update_queue_message = async (queue_message, page=-1) => {
             let { embed, num_pages, _, page_idx } = Queue.createEmbed(songs, `${args} (${songs.length} track)`, null, -1, page, false)

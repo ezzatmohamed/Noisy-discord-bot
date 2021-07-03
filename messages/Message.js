@@ -2,9 +2,10 @@ const { MessageEmbed } = require('discord.js')
 
 class Message {
     
-    constructor(channel, params) {
+    constructor(channel, params, reply_on=undefined) {
         this.channel = channel
         this.had_component = false
+        this.reply_on = reply_on
         this.setContent(params)
     }
 
@@ -46,7 +47,7 @@ class Message {
 
     async send() {
         if (this.message) return await this.edit(this.params)
-        this.message = await this.channel.send(this.getFullContent())
+        this.message = this.reply_on ? await this.reply_on.lineReply(this.getFullContent()) : await this.channel.send(this.getFullContent())
         return this.message
     }
 

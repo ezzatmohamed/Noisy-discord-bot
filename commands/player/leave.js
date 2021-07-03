@@ -8,11 +8,11 @@ module.exports = {
         else if (leave_result === -1) await (new bot.MessagesController.Message(message.channel, {
             type: 'danger',
             description: `I'm not here already 🥺`,
-        })).send()
+        }, message)).send()
         else if (leave_result === 1) await (new bot.MessagesController.Message(message.channel, {
             type: 'danger',
             description: `You must be in the same channel`,
-        })).send()
+        }, message)).send()
     },
 
     description: `dump description`,

@@ -28,7 +28,7 @@ module.exports = {
             .addComponent(next_page_button)
             .addComponent(last_page_button)
         
-        const queue_message = new bot.MessagesController.Message(message.channel, {})
+        const queue_message = new bot.MessagesController.Message(message.channel, {}, message)
 
         const update_queue_message = async (queue_message, page=-1) => {
             let { embed, num_pages, current_playing_page, page_idx } = player.queue.getEmbed(page)
@@ -71,13 +71,13 @@ module.exports = {
         bot.on('clickButton', click_button_listener)
 
         // TODO: decide to remove the listeners if same command requested
-        setTimeout(async () => {
-            queue_message.setContent({ ...queue_message.params, component: undefined })
-            await queue_message.send()
+        // setTimeout(async () => {
+        //     queue_message.setContent({ ...queue_message.params, component: undefined })
+        //     await queue_message.send()
 
-            player.queue.removeListener('QueueChanged', queue_changes_listener)
-            bot.removeListener('clickButton', click_button_listener)
-        }, 120000)
+        //     player.queue.removeListener('QueueChanged', queue_changes_listener)
+        //     bot.removeListener('clickButton', click_button_listener)
+        // }, 120000)
 
     },
 

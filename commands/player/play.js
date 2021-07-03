@@ -15,10 +15,10 @@ module.exports = {
         if (songs.length == 1) (new bot.MessagesController.Message(message.channel, {
             description: `${was_empty ? 'Now Playing' : 'Queued'} [${songs[0].title}](${songs[0].url})\nby <@${songs[0].added_by}>`,
             thumbnail: songs[0].thumbnail
-        })).send()
+        }, message)).send()
         else if (songs.length > 1) (new bot.MessagesController.Message(message.channel, {
             description: `Queued **${songs.length}** song` + (was_empty ? ` and Now playing [${songs[0].title}](${songs[0].url})` : '') + `\nby <@${songs[0].added_by}>`,
-        })).send()
+        }, message)).send()
     },
 
     description: `dump description`,

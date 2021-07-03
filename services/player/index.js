@@ -5,11 +5,9 @@ const YoutubeAdapter = require('../../adaptors/youtube')
 const youtube_adapter = new YoutubeAdapter()
 
 class Player {
-    constructor(bot, session, queue=[], current=0, autoplay=true) {
+    constructor(bot, session, queue=[], current=0, loop=undefined, autoplay=undefined) {
         this.bot = bot
         this.queue = Queue.createQueue(queue)
-        this.current = current
-        this.autoplay = autoplay
         this.session = session
     }
 
@@ -35,9 +33,24 @@ class Player {
         return songs
     }
 
-    async start(song_idx=0) {
-        if (song_idx < 0 || song_idx >= this.queue.queue.length) return false
-        const stream = await youtube_adapter.getStream(this.queue.queue[song_idx].url)
+    async next() {
+        const success = this.queue.next()
+        if (!success && this.queue.autoplay !== Queue.AUTOPLAY_MODES.AUTOPLAY_OFF) return await this.addRelated()
+        return success
+    }
+
+    async addRelated() {
+        if (this.queue.autoplay === Queue.AUTOPLAY_MODES.AUTOPLAY_QUEUE) this.queue.add(this.queue.queue[this.queue.queue.length - 1])
+        else if (this.queue.autoplay === Queue.AUTOPLAY_MODES.AUTOPLAY_SONG) this.queue.add(this.queue.queue[this.queue.queue.length - 1])
+        else return false
+        return true
+    }
+
+    async start(song_idx=undefined) {
+        if (song_idx && (song_idx < 0 || song_idx >= this.queue.queue.length)) return false
+        const current_track = this.queue.getCurrentTrack()
+        if (!current_track) return false
+        const stream = await youtube_adapter.getStream(current_track.url)
         if (stream) {
             this.session.voice.connection.play(stream, { type: 'opus' })
             return true

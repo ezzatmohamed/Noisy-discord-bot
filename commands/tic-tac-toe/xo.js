@@ -14,7 +14,8 @@ module.exports = {
         
         // TODO: variable board size (larger than 3 the ai engine hangs out)
         if (board_size < 3 || board_size > 3) {
-            return await message.lineReply('Invalid board size')
+            const reply_message = new bot.MessagesController.Message(message.channel, {description: 'Invalid board size'}, message)
+            return await reply_message.send()
         }
 
         difficulty = /.*medium.*/.exec(args) ? 'medium' : 'hard'
