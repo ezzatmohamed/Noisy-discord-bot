@@ -47,7 +47,9 @@ class Message {
 
     async send() {
         if (this.message) return await this.edit(this.params)
-        this.message = this.reply_on ? await this.reply_on.lineReply(this.getFullContent()) : await this.channel.send(this.getFullContent())
+        const full_content = this.getFullContent()
+        this.message = this.reply_on ? await this.reply_on.lineReplyNoMention(full_content) : await this.channel.send(this.getFullContent())
+        if (full_content.components) await this.edit(this.params)
         return this.message
     }
 

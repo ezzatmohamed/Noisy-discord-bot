@@ -7,7 +7,7 @@ class Queue extends EventEmitter {
     static LOOP_MODES = { LOOP_OFF: 0, LOOP_QUEUE: 1, LOOP_SONG: 2 }
     static AUTOPLAY_MODES = { AUTOPLAY_OFF: 0, AUTOPLAY_QUEUE: 1, AUTOPLAY_SONG: 2 }
 
-    constructor(queue=[], name=undefined, current=0, loop=Queue.LOOP_MODES.LOOP_OFF, autoplay=Queue.AUTOPLAY_MODES.AUTOPLAY_OFF) {
+    constructor(queue=[], name=undefined, current=0, loop=Queue.LOOP_MODES.LOOP_OFF, autoplay=Queue.AUTOPLAY_MODES.AUTOPLAY_SONG) {
         
         super()
         this.queue = queue
@@ -20,7 +20,7 @@ class Queue extends EventEmitter {
 
     }
 
-    static createQueue(queue, name=undefined, current=0, loop=Queue.LOOP_MODES.LOOP_OFF, autoplay=Queue.AUTOPLAY_MODES.AUTOPLAY_OFF) {
+    static createQueue(queue, name=undefined, current=0, loop=Queue.LOOP_MODES.LOOP_OFF, autoplay=Queue.AUTOPLAY_MODES.AUTOPLAY_SONG) {
         if (typeof queue === Queue) return queue
         else if (typeof queue === typeof []) return new Queue(queue, name, current, loop, autoplay)
         else return new Queue([], name, current, loop, autoplay)

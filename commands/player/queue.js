@@ -39,8 +39,18 @@ module.exports = {
             buttons.components[3].disabled = !(page_idx != num_pages - 1)
             buttons.components[4].disabled = !(page_idx != num_pages - 1)
             
-            if (embed) 
+            if (embed)  {
+                embed = embed.setFooter(`loop: ${
+                    player.queue.loop === player.queue.LOOP_MODES.LOOP_OFF ? 'off' : 
+                    (player.queue.loop === player.queue.LOOP_MODES.LOOP_QUEUE ? 'queue 🔁' : 
+                    (player.queue.loop === player.queue.LOOP_MODES.LOOP_SONG ? 'current song 🔂' : ''))
+                }  |  autoplay: ${
+                    player.queue.autoplay === player.queue.AUTOPLAY_MODES.AUTOPLAY_OFF ? 'off' : 
+                    (player.queue.autoplay === player.queue.AUTOPLAY_MODES.AUTOPLAY_QUEUE ? 'related to the whole queue' : 
+                    (player.queue.autoplay === player.queue.AUTOPLAY_MODES.AUTOPLAY_SONG ? 'related to last song' : ''))
+                }`)
                 queue_message.setContent({ embed, component: [buttons] })
+            }
             else
                 queue_message.setContent({
                     type: 'danger',
