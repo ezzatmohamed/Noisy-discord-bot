@@ -7,7 +7,8 @@ const radio_channels = {
     "nagham" : "https://ahmsamir.radioca.st/stream",
     "nogom": "https://reach-audio.esteam.rocks/radio/8000/live.mp3",
     "nile": "https://reach-audio.esteam.rocks/radio/8010/live.mp3",
-    "masr": "https://live.radiomasr.net/RADIOMASR"
+    "masr": "https://live.radiomasr.net/RADIOMASR",
+    "sha3byat": "http://178.32.62.154:9010/stream/"
 }
 
 const channelsName = [
@@ -16,6 +17,7 @@ const channelsName = [
     {name:'2- naghamFM',value:".radio nagham"},
     {name:'3- nileFM',value:".radio nile"},
     {name:'4- radioMASR',value:".radio masr"},
+    {name:'4- sha3byat',value:".radio sha3byat"},
 
 ]
 
