@@ -32,26 +32,40 @@ class YoutubeAdapter {
         catch (_) { return [] }
     }
 
-    async getStream(url) {
-        try { return await this.stream_adapter.getStream(url) }
+    async getStream(url, seek=0) {
+        try { return await this.stream_adapter.getStream(url, seek) }
         catch (_) { return undefined }
     }
 
-    async getRelated(url, exclude_urls) {
-        return (await this.stream_adapter.getRelated(url)).filter(video => !exclude_urls.include(video.url))
+    async getRelated(url, exclude_urls=[]) {
+        const exclude_ids = exclude_urls.map(url => ((new RegExp('v=([^&]+)').exec(url)) || (new RegExp('youtu\.be\/([^&]+)').exec(url)))[1])
+        const res = (await this.stream_adapter.getRelated(url)).filter(video => !exclude_ids.includes(video.id))
+        return res
     }
 
     async getSongs(query) {
         let songs = []
-        if (validURL(query) && /youtu\.be\/|youtube\.com\/watch/.test(query)) {
+        if (this.isValidSongURL(query)) {
             let song_info = await this.videoInfo(query)
             song_info && songs.push(song_info)
-        } else if (validURL(query) && /youtube\.com\/playlist/.test(query)) {
+        } else if (this.isValidPlaylistURL(query)) {
             songs.push(...(await this.listInfo(query)))
         } else {
             songs.push(...(await this.search(query, 1)))
         }
         return songs
+    }
+
+    isValidSongURL(url) {
+        return validURL(url) && /youtu\.be\/|youtube\.com\/watch/.test(url)
+    }
+
+    isValidPlaylistURL(url) {
+        return validURL(url) && /youtube\.com\/playlist/.test(url)
+    }
+
+    isValidURL(url) {
+        return this.isValidSongURL(url) || this.isValidPlaylistURL(url)
     }
 }
 

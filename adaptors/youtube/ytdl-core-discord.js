@@ -1,4 +1,4 @@
-const ytdl = require('ytdl-core-discord')
+const ytdl = require('discord-ytdl-core')
 
 class YTDLAdapter {
 
@@ -16,8 +16,12 @@ class YTDLAdapter {
     }
 
 
-    async getStream(url) {
-        return await ytdl(url)
+    async getStream(url, seek=0) {
+        return await ytdl(url, {
+            filter: "audioonly",
+            opusEncoded: true,
+            seek
+        })
     }
 
     async getRelated(url) {

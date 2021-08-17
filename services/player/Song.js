@@ -13,6 +13,7 @@ class Song {
         this.ago = song_info.ago
         this.views = song_info.views
         this.added_by = song_info.added_by
+        this.provider = song_info.provider
     }
 
     static async create(song_info) {
