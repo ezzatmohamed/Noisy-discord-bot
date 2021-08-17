@@ -59,20 +59,67 @@ class Player {
         return true
     }
 
-    async start(callback=undefined, next_callback=undefined, song_idx=undefined) {
+    async start(callback=undefined, next_callback=undefined, song_idx=undefined, seek_time=0) {
         if (song_idx && (song_idx < 0 || song_idx >= this.queue.queue.length)) return false
         const current_track = this.queue.getCurrentTrack()
         if (!current_track) return false
-        const stream = await adapter.getStream(current_track.url)
+        const stream = await adapter.getStream(current_track.url, seek_time)
         if (stream) {
             const dispatcher = this.session.voice.connection.play(stream, { type: 'opus' })
             callback && await callback(this)
-            dispatcher.once('finish', async () => {
+            dispatcher.nextCallback = next_callback
+            dispatcher.seekedTo = seek_time
+            dispatcher.finishListener = async () => {
                 (await this.next()) && (await this.start(next_callback))
-            })
+            }
+            dispatcher.once('finish', dispatcher.finishListener)
             return true
         }
         return false
+    }
+
+    async pause() {
+        if (this.session.voice && this.session.voice.connection && this.session.voice.connection.dispatcher) {
+            await this.session.voice.connection.dispatcher.pause()
+            return true
+        }
+        return false
+    }
+
+    async resume() {
+        if (this.session.voice && this.session.voice.connection && this.session.voice.connection.dispatcher) {
+            await this.session.voice.connection.dispatcher.resume()
+            return true
+        }
+        return false
+    }
+
+    async fastforward(time) {
+        if (time.endsWith('ms')) time = Number(time.slice(0, -2)) / 1000
+        else if (time.endsWith('s')) time = Number(time.slice(0, -1))
+        else if (time.endsWith('m')) time = Number(time.slice(0, -1))*60
+        else time = Number(time)
+        if (isNaN(time) || time <= 0) return false
+        const dispatcher = this.session.voice.connection.dispatcher
+        time = dispatcher.seekedTo + dispatcher.streamTime/1000 + time
+        if (dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener) // Note: maybe dropped the next_callback function
+        dispatcher.end()
+        this.start(undefined, dispatcher.nextCallback, undefined, time)
+        return true
+    }
+
+    async rewind(time) {
+        if (time.endsWith('ms')) time = Number(time.slice(0, -2)) / 1000
+        else if (time.endsWith('s')) time = Number(time.slice(0, -1))
+        else if (time.endsWith('m')) time = Number(time.slice(0, -1))*60
+        else time = Number(time)
+        if (isNaN(time) || time <= 0) return false
+        const dispatcher = this.session.voice.connection.dispatcher
+        time = Math.max(dispatcher.seekedTo + dispatcher.streamTime/1000 - time, 0)
+        if (dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener) // Note: maybe dropped the next_callback function
+        dispatcher.end()
+        this.start(undefined, dispatcher.nextCallback, undefined, time)
+        return true
     }
 
     async getResponseMessage(message, songs, now_playing, reply=true) {

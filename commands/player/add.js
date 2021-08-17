@@ -4,16 +4,12 @@ module.exports = {
     handler: async (message, args, session, bot, verbose=true) => {
 
         const player = session.getPlayer()
+        const was_empty = player.queue.queue.length === 0
         const songs = await player.add(message, args)
         
         if (verbose) {
-            if (songs.length == 1) (new bot.MessagesController.Message(message.channel, {
-                description: `Queued [${songs[0].title}](${songs[0].url})\nby <@${songs[0].added_by}>`,
-                thumbnail: songs[0].thumbnail
-            }, message)).send()
-            else if (songs.length > 1) (new bot.MessagesController.Message(message.channel, {
-                description: `Queued ${songs.length} song\nby <@${songs[0].added_by}>`,
-            }, message)).send()
+            const res_message = await player.getResponseMessage(message, songs, was_empty)
+            await res_message.send()
         }
 
         return songs

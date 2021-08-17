@@ -3,8 +3,14 @@ module.exports = {
 
     handler: async (message, args, session, bot) => {
         
-        const played_time = session.voice.connection.dispatcher.totalStreamTime
-        await message.react('👌')
+        const player = session.getPlayer()
+
+        if (await player.fastforward(args)) await message.react('👌')
+        else await (new bot.MessagesController.Message(message.channel, {
+            type: 'danger',
+            description: `Invalid time`,
+        }, message)).send()
+
     },
 
     description: `dump description`,
