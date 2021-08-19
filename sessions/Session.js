@@ -37,9 +37,9 @@ class Session {
     /**
      * * start player service
      */
-    getPlayer() {
-        if (this.player) return this.player
-        this.player = new Player(this.bot, this)
+    getPlayer(message) {
+        if (!this.player) this.player = new Player(this.bot, this)
+        this.player.channel = message.channel
         return this.player
     }
 

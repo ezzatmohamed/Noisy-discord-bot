@@ -3,7 +3,7 @@ module.exports = {
 
     handler: async (message, args, session, bot, verbose=true) => {
 
-        const player = session.getPlayer()
+        const player = session.getPlayer(message)
         const mode = args.trim() === 'off' ? player.queue.LOOP_MODES.LOOP_OFF : 
             (args.trim() === 'queue' ? player.queue.LOOP_MODES.LOOP_QUEUE : 
             (args.trim() === 'song' ? player.queue.LOOP_MODES.LOOP_SONG : undefined))

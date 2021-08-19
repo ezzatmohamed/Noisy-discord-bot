@@ -1,10 +1,12 @@
 module.exports = {
-    name: ['clear', 'c'],
+    name: ['shuffle'],
 
     handler: async (message, args, session, bot) => {
         
         const player = session.getPlayer(message)
-        player.clear()
+        await player.shuffle()
+
+        if (player.queue.queue.length > 0) player.start()
 
         await message.react('👌')
     },

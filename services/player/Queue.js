@@ -26,20 +26,66 @@ class Queue extends EventEmitter {
         else return new Queue([], name, current, loop, autoplay)
     }
 
-    add(song, pos=-1) {
-        if (pos === -1) this.queue.push(song)
-        else this.queue.insert(song, pos)
+    add(songs, pos=-1) {
+        if (pos === -1) this.queue.push(...songs)
+        else this.queue.splice(pos, 0, ...songs)
         this.emit('QueueChanged')
     }
 
-    next() {
+    next(force=false) {
         if (this.queue.length === 0) return false
-        // else if (this.loop === Queue.LOOP_MODES.LOOP_SONG) this.current = this.current
+        else if (!force && this.loop === Queue.LOOP_MODES.LOOP_SONG) this.current = this.current
         else if (this.current < this.queue.length - 1) this.current += 1
         else if (this.loop === Queue.LOOP_MODES.LOOP_QUEUE) this.current = 0
         else return false
         this.emit('QueueChanged')
         return true
+    }
+
+    previous(force=false) {
+        if (this.queue.length === 0) return false
+        else if (!force && this.loop === Queue.LOOP_MODES.LOOP_SONG) this.current = this.current
+        else if (this.current > 0) this.current -= 1
+        else if (this.loop === Queue.LOOP_MODES.LOOP_QUEUE) this.current = this.queue.length - 1
+        else return false
+        this.emit('QueueChanged')
+        return true
+    }
+
+    jump(idx) {
+        if (idx >= 0 && idx < this.queue.length) this.current = idx
+        else return false
+        this.emit('QueueChanged')
+        return true
+    }
+
+    /**
+     * 
+     * @param {*} idx 
+     * @returns 
+     *      1 if safely removes
+     *      0 if not removed
+     *     -1 if need to replay current
+     *     -2 if current last song removed
+     */
+    remove(idx) {
+        let res = [0, undefined]
+        if (idx >= 0 && idx < this.queue.length) {
+            let removed = this.queue.splice(idx, 1)[0]
+            if (idx > this.current) res = [1, removed]
+            else if (idx == this.current) {
+                if (this.current == this.queue.length) {
+                    this.current = Math.max(0, this.queue.length - 1)
+                    res = [-2, removed]
+                }
+                else res = [-1, removed]
+            } else {
+                this.current = Math.max(1, this.current - 1)
+                res =  [1, removed]
+            }
+        }
+        if (res != 0) this.emit('QueueChanged')
+        return res
     }
 
     changeLoopMode(mode=undefined) {
@@ -75,12 +121,17 @@ class Queue extends EventEmitter {
             .map((a) => ({sort: Math.random(), value: a}))
             .sort((a, b) => a.sort - b.sort)
             .map((a) => a.value)
+        this.current = 0
         this.emit('QueueChanged')
     }
 
     getCurrentTrack() {
         if (this.queue.length === 0 || this.current < 0 || this.current >= this.queue.length) return undefined
         return this.queue[this.current]
+    }
+
+    getTrack(idx) {
+        return this.queue[idx]
     }
 
     getCurrentPlayingPage() {

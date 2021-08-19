@@ -5,7 +5,7 @@ module.exports = {
     name: ['search', 's'],
 
     handler: async (message, args, session, bot) => {
-        const player = session.getPlayer()
+        const player = session.getPlayer(message)
         const songs = await player.search(message, args)
         
         let page_idx = 0

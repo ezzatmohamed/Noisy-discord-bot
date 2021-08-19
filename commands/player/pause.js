@@ -3,7 +3,7 @@ module.exports = {
 
     handler: async (message, args, session, bot) => {
         
-        const player = session.getPlayer()
+        const player = session.getPlayer(message)
 
         if (await player.pause()) await message.react('👌')
         else await (new bot.MessagesController.Message(message.channel, {

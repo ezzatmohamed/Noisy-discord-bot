@@ -4,7 +4,19 @@ module.exports = {
     name: ['queue', 'q'],
 
     handler: async (message, args, session, bot) => {
-        const player = session.getPlayer()
+        const player = session.getPlayer(message)
+
+        if (session.queue_message) {
+            session.queue_message.setContent({ ...session.queue_message.params, component: undefined })
+            await session.queue_message.send()
+
+            player.queue.removeListener('QueueChanged', session.queue_changes_listener)
+            bot.removeListener('clickButton', session.click_button_listener)
+
+            session.queue_message = undefined
+            session.queue_changes_listener = undefined
+            session.click_button_listener = undefined
+        }
         
         let page_idx = 0
 
@@ -80,14 +92,10 @@ module.exports = {
         }
         bot.on('clickButton', click_button_listener)
 
-        // TODO: decide to remove the listeners if same command requested
-        // setTimeout(async () => {
-        //     queue_message.setContent({ ...queue_message.params, component: undefined })
-        //     await queue_message.send()
-
-        //     player.queue.removeListener('QueueChanged', queue_changes_listener)
-        //     bot.removeListener('clickButton', click_button_listener)
-        // }, 120000)
+        session.queue_message = queue_message
+        session.queue_changes_listener = queue_changes_listener
+        session.click_button_listener = click_button_listener
+        
 
     },
 

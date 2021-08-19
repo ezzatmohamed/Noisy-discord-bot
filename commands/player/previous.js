@@ -1,5 +1,5 @@
 module.exports = {
-    name: ['next', 'n'],
+    name: ['previous', 'prev'],
 
     handler: async (message, args, session, bot, verbose=true) => {
 
@@ -9,20 +9,17 @@ module.exports = {
             description: `The queue is empty! add some fun 😊`,
         }, message)).send()
 
-        const res = await player.next(true)
-        if (res != 0) {
+        const res = await player.previous(true)
+        console.log(player.queue.current)
+        if (res) {
             await session.joinVoice(message.member.voice.channel)
             player.start(async (player) => {
-                const res_message = await player.getResponseMessage(message, undefined, true, true, res == -1 ? 'edit' : 'delete')
+                const res_message = await player.getResponseMessage(message, undefined, true, true, 'delete')
                 await res_message.send()
             })
-        } else if (player.queue.autoplay !== player.queue.AUTOPLAY_MODES.AUTOPLAY_OFF) return await (new bot.MessagesController.Message(message.channel, {
+        } else return await (new bot.MessagesController.Message(message.channel, {
             type: 'danger',
-            description: `Can't add new tracks 🥺, can you?`,
-        }, message)).send()
-        else return await (new bot.MessagesController.Message(message.channel, {
-            type: 'danger',
-            description: `Nothing is up next! add more tracks 😊`,
+            description: `Nothing is before!`,
         }, message)).send()
         
     },

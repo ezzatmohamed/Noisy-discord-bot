@@ -3,9 +3,9 @@ module.exports = {
 
     handler: async (message, args, session, bot) => {
         
-        const player = session.getPlayer()
+        const player = session.getPlayer(message)
 
-        if (await player.rewind(args)) await message.react('👌')
+        if (await player.seek(args, -1)) await message.react('👌')
         else await (new bot.MessagesController.Message(message.channel, {
             type: 'danger',
             description: `Invalid time`,
