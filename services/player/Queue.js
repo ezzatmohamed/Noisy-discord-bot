@@ -26,6 +26,13 @@ class Queue extends EventEmitter {
         else return new Queue([], name, current, loop, autoplay)
     }
 
+    set queue_current(value) {
+        if (value >= 0 && value < this.queue.length) {
+            this.current = value
+            this.emit('QueueChanged')
+        }
+    }
+
     add(songs, pos=-1) {
         if (pos === -1) this.queue.push(...songs)
         else this.queue.splice(pos, 0, ...songs)

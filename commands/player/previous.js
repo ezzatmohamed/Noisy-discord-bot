@@ -10,7 +10,6 @@ module.exports = {
         }, message)).send()
 
         const res = await player.previous(true)
-        console.log(player.queue.current)
         if (res) {
             await session.joinVoice(message.member.voice.channel)
             player.start(async (player) => {

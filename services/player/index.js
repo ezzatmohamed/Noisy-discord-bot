@@ -88,9 +88,7 @@ class Player {
     async start(callback=undefined, seek_time=0) {
         const current_track = this.queue.getCurrentTrack()
         if (!current_track) {
-            const dispatcher = this.session.voice.connection.dispatcher
-            if (dispatcher && dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener)
-            dispatcher.end()
+            this.stop()
             return false
         }
         const stream = await adapter.getStream(current_track.url, seek_time)
@@ -130,6 +128,22 @@ class Player {
         return false
     }
 
+    async stop() {
+        const dispatcher = this.session.voice.connection.dispatcher
+        if (dispatcher) {
+            if (dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener)
+            dispatcher.end()
+            dispatcher.destroy()
+        }
+
+        this.queue.queue_current = 0
+        return true
+    }
+
+    async play() {
+        return (await this.resume()) || (await this.start())
+    }
+
     async seek(time, sign=1) {
         if (time.endsWith('ms')) time = Number(time.slice(0, -2)) / 1000
         else if (time.endsWith('s')) time = Number(time.slice(0, -1))
@@ -137,6 +151,7 @@ class Player {
         else time = Number(time)
         if (isNaN(time) || time <= 0) return false
         const dispatcher = this.session.voice.connection.dispatcher
+        if (!dispatcher) return false
         time = Math.max(dispatcher.seekedTo + dispatcher.streamTime/1000 + sign*time, 0)
         if (dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener)
         dispatcher.end()

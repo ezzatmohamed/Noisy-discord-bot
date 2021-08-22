@@ -1,10 +1,12 @@
 const Player = require('../services/player')
+const Radio = require('../services/radio')
 const TicTacToe = require('../services/tic-tac-toe')
 
 class Session {
     constructor(bot, guild_id) {
         this.bot = bot
         this.guild_id = guild_id
+        this.voice_controller = undefined
     }
 
     /**
@@ -37,18 +39,56 @@ class Session {
     /**
      * * start player service
      */
+    getVoiceController(message) {
+        if (this.voice_controller && this.voice_controller.constructor.name === 'Player') return this.getPlayer(message)
+        else if (this.voice_controller && this.voice_controller.constructor.name === 'Radio') return this.getRadio(message)
+        return this.voice_controller
+    }
+
+    /**
+     * * start player service
+     */
     getPlayer(message) {
+        this.clearVoiceControl('Player')
         if (!this.player) this.player = new Player(this.bot, this)
         this.player.channel = message.channel
+        this.voice_controller = this.player
         return this.player
     }
 
     /**
-     * * terminate player service
+     * * start radio service
      */
-    terminatePlayer() {
-        if (this.player) delete this.player
-        return true
+    getRadio(message) {
+        this.clearVoiceControl('Radio')
+        if (!this.radio) this.radio = new Radio(this.bot, this)
+        this.voice_controller = this.radio
+        return this.radio
+    }
+
+    /**
+     * * clear voice control
+     */
+    clearVoiceControl(not=undefined) {
+        if (this.voice_controller) {
+            if (not && this.voice_controller.constructor.name === not) return
+            this.voice_controller.stop()
+        }
+    }
+
+    /**
+     * * terminate all voice controllers
+     */
+    terminateVoice() {
+        this.voice_controller = undefined
+        if (this.player) {
+            this.player.stop()
+            delete this.player
+        }
+        if (this.radio) {
+            this.radio.stop()
+            delete this.radio
+        }
     }
 
     /**
