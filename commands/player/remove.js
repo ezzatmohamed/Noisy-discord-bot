@@ -14,7 +14,8 @@ module.exports = {
         if (res < 0) {
             if (res == -2) await player.next(true)
 
-            await session.joinVoice(message.member.voice.channel)
+            if (!(await bot.CommandsController.handlers['join'](message, args, session, bot, false, false))) return
+            await session.setVoiceController(player)
             player.start()
         } else if (res == 0) return await (new bot.MessagesController.Message(message.channel, {
             type: 'danger',

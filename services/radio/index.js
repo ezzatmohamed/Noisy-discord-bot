@@ -32,7 +32,7 @@ class Radio extends EventEmitter{
         this.emit('RadioChanged')
         const dispatcher = this.session.voice.connection.dispatcher
         if (dispatcher) {
-            dispatcher.end()
+            await dispatcher.end()
             dispatcher.destroy()
         }
         return true

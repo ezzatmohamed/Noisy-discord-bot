@@ -7,7 +7,8 @@ module.exports = {
 
         const res = !isNaN(Number(args)) && await player.jump(Number(args)-1)
         if (res) {
-            await session.joinVoice(message.member.voice.channel)
+            if (!(await bot.CommandsController.handlers['join'](message, args, session, bot, false, false))) return
+            await session.setVoiceController(player)
             player.start(async (player) => {
                 const res_message = await player.getResponseMessage(message, undefined, true, true, 'delete')
                 await res_message.send()

@@ -6,7 +6,10 @@ module.exports = {
         const player = session.getPlayer(message)
         await player.shuffle()
 
-        if (player.queue.queue.length > 0) player.start()
+        if (player.queue.queue.length > 0) {
+            await session.setVoiceController(player)
+            player.start()
+        }
 
         await message.react('👌')
     },

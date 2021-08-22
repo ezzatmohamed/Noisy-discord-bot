@@ -137,7 +137,7 @@ class Player {
         const dispatcher = this.session.voice.connection.dispatcher
         if (dispatcher) {
             if (dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener)
-            dispatcher.end()
+            await dispatcher.end()
             dispatcher.destroy()
         }
 

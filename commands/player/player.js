@@ -4,7 +4,7 @@ module.exports = {
     name: ['player', 'pr'],
 
     handler: async (message, args, session, bot) => {
-        await session.joinVoice(message.member.voice.channel)
+        if (!(await bot.CommandsController.handlers['join'](message, args, session, bot, false, false))) return
         const player = session.getPlayer(message)
 
         if (session.player_message) {
@@ -58,13 +58,14 @@ module.exports = {
         await update_player_message()
 
         async function player_click_button_listener(button) {
+            button.defer()
+            
             if (button.id === previous_button_id) await bot.CommandsController.handlers['previous'](message, '', session, bot, true, false)
             if (button.id === rewind_button_id) await bot.CommandsController.handlers['rewind'](message, '10s', session, bot, true, false)
             if (button.id === play_pause_button_id) await bot.CommandsController.handlers['toggle'](message, '', session, bot, true, false)
             if (button.id === fastforward_button_id) await bot.CommandsController.handlers['fastforward'](message, '10s', session, bot, true, false)
             if (button.id === next_button_id) await bot.CommandsController.handlers['next'](message, '', session, bot, true, false)
             
-            button.defer()
             await update_player_message()
         }
         bot.on('clickButton', player_click_button_listener)

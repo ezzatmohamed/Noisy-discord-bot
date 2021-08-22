@@ -11,16 +11,18 @@ class Session {
 
     /**
      * * join voice channel
+     * * return 0 if success, 1 if in the same channel, -1 if not in a channel
      */
     async joinVoice(voice_channel) {
-        if (this.voice && voice_channel.id === this.voice.id) return
-        if (!voice_channel) return
+        if (this.voice && voice_channel.id === this.voice.id) return 1
+        if (!voice_channel) return -1
         
         const connection = await voice_channel.join()
         await voice_channel.guild.voice.setSelfDeaf(true)
 
         this.voice = voice_channel
         this.voice.connection = connection
+        return 0
     }
 
     /**
@@ -49,10 +51,10 @@ class Session {
      * * start player service
      */
     getPlayer(message) {
-        this.clearVoiceControl('Player')
+        // this.clearVoiceControl('Player')
         if (!this.player) this.player = new Player(this.bot, this)
         this.player.channel = message.channel
-        this.voice_controller = this.player
+        // this.voice_controller = this.player
         return this.player
     }
 
@@ -60,19 +62,27 @@ class Session {
      * * start radio service
      */
     getRadio(message) {
-        this.clearVoiceControl('Radio')
+        // this.clearVoiceControl('Radio')
         if (!this.radio) this.radio = new Radio(this.bot, this)
-        this.voice_controller = this.radio
+        // this.voice_controller = this.radio
         return this.radio
+    }
+
+    /**
+     * * set voice controller
+     */
+    async setVoiceController(controller) {
+        await this.clearVoiceControl(controller.constructor.name)
+        this.voice_controller = controller
     }
 
     /**
      * * clear voice control
      */
-    clearVoiceControl(not=undefined) {
+    async clearVoiceControl(not=undefined) {
         if (this.voice_controller) {
             if (not && this.voice_controller.constructor.name === not) return
-            this.voice_controller.stop()
+            await this.voice_controller.stop()
         }
     }
 
@@ -97,6 +107,11 @@ class Session {
     createTicTacToe(player_one, player_two, difficulty, board_size=3) {
         const tic_tac_toe = new TicTacToe(this.bot, this, player_one, player_two, difficulty, board_size)
         return tic_tac_toe
+    }
+
+    get voice_controller_type() {
+        if (this.voice_controller) return this.voice_controller.constructor.name
+        else return undefined
     }
 }
 

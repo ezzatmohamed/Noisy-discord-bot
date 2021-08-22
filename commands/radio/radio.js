@@ -89,6 +89,7 @@ module.exports = {
 
 
         } else {
+            await session.setVoiceController(radio)
             const radio_channel = await radio.start(Number(args)-1)
             if (radio_channel) await (new bot.MessagesController.Message(message.channel, {
                 description: `Now, you're listening to **${radio_channel.name}** 📻`,
