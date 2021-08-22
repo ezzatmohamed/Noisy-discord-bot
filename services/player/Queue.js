@@ -183,6 +183,10 @@ class Queue extends EventEmitter {
             page_idx
         }
     }
+
+    get autoplay_on() {
+        return this.autoplay != this.AUTOPLAY_MODES.AUTOPLAY_OFF
+    }
 }
 
 module.exports = Queue

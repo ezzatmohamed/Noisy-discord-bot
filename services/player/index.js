@@ -1,8 +1,11 @@
 const Queue = require('./Queue')
 const Song = require('./Song')
 const Adapter = require('../../adaptors')
+const { MessageEmbed } = require('discord.js')
 
 const adapter = new Adapter()
+
+BAR_LENGTH = 32
 
 class Player {
     constructor(bot, session, channel=undefined, queue=[]) {
@@ -12,6 +15,7 @@ class Player {
         this.session = session
         this.channel = channel
         this.now_playing_message = { message: undefined, edits: undefined }
+        this.player_message = undefined
     }
 
     convertToSongs(message, songs_info) {
@@ -129,6 +133,7 @@ class Player {
     }
 
     async stop() {
+        await this.changeNowPlayingMessage()
         const dispatcher = this.session.voice.connection.dispatcher
         if (dispatcher) {
             if (dispatcher.finishListener) dispatcher.removeListener('finish', dispatcher.finishListener)
@@ -161,11 +166,7 @@ class Player {
 
     async getResponseMessage(message, songs, now_playing, reply=true, next_mode='edit', removed=false) {
 
-        if (now_playing && this.now_playing_message.message) {
-            if (this.now_playing_message.edits == 'nothing') {}
-            else if (!this.now_playing_message.edits) await this.now_playing_message.message.delete()
-            else await this.now_playing_message.message.edit(this.now_playing_message.edits)
-        }
+        if (now_playing && this.now_playing_message.message) await this.changeNowPlayingMessage()
 
         if (!songs) songs = [this.queue.getCurrentTrack()]
 
@@ -191,6 +192,65 @@ class Player {
         const res_message = new this.bot.MessagesController.Message(message.channel, thumbnail ? { description, thumbnail } : { description }, reply ? message : undefined)
         if (next_mode != 'off') this.now_playing_message.message = res_message
         return res_message
+    }
+
+    async changeNowPlayingMessage() {
+        if (this.now_playing_message.edits == 'nothing') {}
+        else if (!this.now_playing_message.edits) await this.now_playing_message.message.delete()
+        else await this.now_playing_message.message.edit(this.now_playing_message.edits)
+    }
+
+    async getPlayerMessage(message=undefined, reply_on=undefined, content={}) {
+
+        if (!message && this.player_message) await this.player_message.delete()
+
+        let song = this.queue.getCurrentTrack()
+        const dispatcher = this.session.voice.connection.dispatcher
+        if (!song || !dispatcher) {
+            if (message) message.setContent({
+                type: 'danger',
+                description: `Nothing is playing! add tracks 😊`,
+            })
+            else message = (new this.bot.MessagesController.Message(reply_on.channel, {
+                type: 'danger',
+                description: `Nothing is playing! add tracks 😊`,
+            }, reply_on))
+            return message
+        }
+
+        let description = ''
+        let footer = ''
+        let thumbnail = ''
+
+        // thumbnail = song.thumbnail
+
+        let total_time = song.duration.toSecs()
+        let slice_length = total_time/BAR_LENGTH
+        let streamed_time = dispatcher.seekedTo + dispatcher.streamTime/1000
+        let left_length = Math.floor(streamed_time / slice_length)
+        let streamed_time_string = Math.floor(streamed_time).toHHMMSS()
+        let total_time_string = song.duration
+        let remaining_time_string = '-' + Math.floor(total_time - streamed_time).toHHMMSS()
+        let sep_length = Math.floor((BAR_LENGTH*1.5 - streamed_time_string.length - total_time_string.length - remaining_time_string.length) / 2)
+        description = `[${song.title}](${song.url})\nby <@${song.added_by}>\n`
+        footer = `${'▬'.repeat(left_length)}🔵${'▬'.repeat(BAR_LENGTH-1-left_length)}\n` + 
+                    `${streamed_time_string}${'⠀'.repeat(sep_length)}${total_time_string}${'⠀'.repeat(sep_length)}${remaining_time_string}`
+
+        
+        if (!message) message = new this.bot.MessagesController.Message(reply_on.channel, thumbnail ? { description, thumbnail, footer } : { description, footer }, reply_on)
+        else {
+            message.setContent({
+                description, thumbnail, footer, ...content
+            })
+        }
+        this.player_message = message
+
+        return message
+    }
+
+    get is_paused() {
+        const dispatcher = this.session.voice.connection.dispatcher
+        return !dispatcher || dispatcher.paused
     }
 }
 

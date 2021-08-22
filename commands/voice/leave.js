@@ -2,7 +2,7 @@ module.exports = {
     name: ['leave', 'bye', 'die'],
 
     handler: async (message, args, session, bot) => {
-        session.clearVoiceControl()
+        session.terminateVoice()
         const leave_result = await session.leaveVoice(message.member.voice.channel)
         
         if (leave_result === 0) await message.react('🚶')

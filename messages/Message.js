@@ -26,22 +26,25 @@ class Message {
         if (this.params.description) embed = embed.setDescription(this.params.description)
         if (this.params.thumbnail) embed = embed.setThumbnail(this.params.thumbnail)
         if (this.params.footer && (this.params.footer.title || this.params.footer.image)) embed = embed.setFooter(this.params.footer.title || '\u200B', this.params.footer.image)
+        else if (this.params.footer) embed = embed.setFooter(this.params.footer)
         return embed
     }
     
-    getFullContent() {
+    getFullContent(edit=false) {
         return this.params.component || this.had_component ?
             this.content instanceof MessageEmbed ? 
                 {content: this.params.content || '⠀', embed: this.content, components: this.params.component} 
                 : { content: this.content, components: this.params.component }
-            : this.content
+            : (this.content instanceof MessageEmbed ? 
+                {content: this.params.content || '⠀', embed: this.content} 
+                : this.content)
     }
 
     async edit(params) {
         this.setContent(params)
         if (!this.message) return await this.send()
-        const full_content = this.getFullContent()
-        await this.message.edit(full_content.content, full_content)
+        const full_content = this.getFullContent(true)
+        await this.message.edit(full_content.content, {...full_content, allowedMentions: { repliedUser: false }})
         return this.message
     }
 
