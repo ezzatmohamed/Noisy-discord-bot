@@ -6,11 +6,14 @@ module.exports = {
 
     handler: async (message, args, session, bot, verbose=true) => {
 
-        let opponent = /\b<@!(\d{18})>\b/.exec(args)
+        let opponent = /<@!(\d{18})>/.exec(args)
         opponent = opponent ? opponent[1] : 'ai'
+        args = args.replace(`<@!${opponent}>`, '') 
 
-        let board_size = /\b(\d+)\b/.exec(args)
+        let board_size = /(\d+)/.exec(args)
         board_size = board_size ? parseInt(board_size[1]) : 3
+
+        console.log(opponent, board_size)
         
         // TODO: variable board size (larger than 3 the ai engine hangs out)
         if (board_size < 3 || board_size > 3) {
