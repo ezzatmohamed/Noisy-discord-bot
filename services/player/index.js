@@ -2,6 +2,7 @@ const Queue = require('./Queue')
 const Song = require('./Song')
 const Adapter = require('../../adaptors')
 const { MessageEmbed } = require('discord.js')
+const QueueModel = require('./QueueSchema')
 
 const adapter = new Adapter()
 
@@ -18,20 +19,22 @@ class Player {
         this.player_message = undefined
     }
 
-    convertToSongs(message, songs_info) {
+    async convertToSongs(message, songs_info) {
         let songs = []
-        songs_info.forEach(async song_info => songs.push(await Song.create({...song_info, added_by: message.author.id})))
+        for (const song_info of songs_info) {
+            songs.push(await Song.create({...song_info, ...(message ? {added_by: message.author.id} : {})}))
+        }
         return songs
     }
 
     async search(message, query) {
         let songs_info = await adapter.search(query)
-        return this.convertToSongs(message, songs_info)
+        return await this.convertToSongs(message, songs_info)
     }
 
     async getSongs(message, query) {
         let songs_info = await adapter.getSongs(query)
-        return this.convertToSongs(message, songs_info)
+        return await this.convertToSongs(message, songs_info)
     }
 
     async add(message, query) {
@@ -96,7 +99,7 @@ class Player {
             return false
         }
         const stream = await adapter.getStream(current_track.url, seek_time)
-        if (stream) {
+        if (stream && this.session.voice) {
             const dispatcher = this.session.voice.connection.play(stream, { type: 'opus' })
             await (callback || (async (player) => {
                 const res_message = await player.getResponseMessage({channel: this.channel}, undefined, true, false, 'delete')
@@ -251,6 +254,75 @@ class Player {
     get is_paused() {
         const dispatcher = this.session.voice.connection.dispatcher
         return !dispatcher || dispatcher.paused
+    }
+
+    async saveQueue() {
+        if (this.queue.name && this.queue.queue.length > 0) {
+            const db_queue = this.queue.db_queue
+            const doc = await QueueModel.findOneAndUpdate({
+                guild_id: this.session.guild_id,
+                name: db_queue.name
+            }, {
+                guild_id: this.session.guild_id,
+                ...db_queue
+            }, {
+                new: true, upsert: true
+            })
+            return Boolean(doc)
+        } else return false
+    }
+
+    async loadQueue(name) {
+        const doc = await this.getSavedQueue(name)
+        if (!Boolean(doc)) return false
+        this.queue = Queue.createQueue(await this.convertToSongs(undefined, doc.queue), doc.name, 0, doc.loop, doc.autoplay)
+        this.start()
+        return true
+    }
+
+    async deleteQueue(name) {
+        const res = await QueueModel.findOneAndDelete({
+            guild_id: this.session.guild_id,
+            name
+        })
+        return Boolean(res)
+    }
+
+    async getSavedQueues() {
+        const docs = await QueueModel.find({
+            guild_id: this.session.guild_id
+        })
+        return docs.map(doc => ({
+            name: doc.name,
+            length: doc.queue.length
+        }))
+    }
+
+    async getSavedQueue(name, use_class=false) {
+        const doc = await QueueModel.findOne({
+            guild_id: this.session.guild_id,
+            name
+        })
+        if (!Boolean(doc)) return undefined
+        return use_class ? Queue.createQueue(doc.queue, doc.name, 0, doc.loop, doc.autoplay) : doc
+    }
+
+    createSavedQueuesEmbed(queues, title, description, page_idx) {
+        if (queues.length === 0) return { embed: undefined, num_pages: 0 }
+        const pages = queues.map((queue, idx) => ({ idx, queue })).chunk(15)
+        page_idx = page_idx === -1 ? 0 : page_idx
+        page_idx = page_idx === -2 || page_idx >= pages.length ? pages.length - 1 : page_idx
+        let embed = new MessageEmbed()
+        embed = title ? embed.setTitle(title) : embed
+        embed = embed.setDescription(description + (pages[page_idx].map(ele => 
+            `# ${ele.idx + 1}⠀**${ele.queue.name}**⠀⠀⠀⠀(${ele.queue.length}) ${ele.queue.length > 1 ? 'songs' : 'song'}${this.queue.name === ele.queue.name ? '⠀⠀⠀⠀⠀⠀⠀🎶' : ''}`
+        ).join('\n')))
+        embed = embed.addFields()
+        return {
+            embed,
+            num_pages: pages.length,
+            page_idx
+        }
     }
 }
 

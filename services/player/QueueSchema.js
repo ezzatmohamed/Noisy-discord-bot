@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const sessionSchema = new mongoose.Schema({
+const queueSchema = new mongoose.Schema({
     guild_id: {
         type: Number,
         required: true,
@@ -8,22 +8,23 @@ const sessionSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
+        unique: true,
     },
     queue: {
         type: Array,
         required: true,
     },
-    current: {
+    autoplay: {
         type: Number,
         required: true,
     },
-    autoplay: {
-        type: Boolean,
+    loop: {
+        type: Number,
         required: true,
     },
-}, { collection: 'servers_sessions' });
+}, { collection: 'queues' })
 
+queueSchema.index({ guild_id: 1, name: 1 })
+let QueueModel = mongoose.model('Queue', queueSchema)
 
-let Model = mongoose.model('Session', sessionSchema);
-
-module.exports = Model;
+module.exports = QueueModel

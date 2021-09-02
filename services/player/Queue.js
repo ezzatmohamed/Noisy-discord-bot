@@ -147,16 +147,16 @@ class Queue extends EventEmitter {
         return current_playing_page
     }
 
-    getEmbed(page_idx=-1) {
+    getEmbed(page_idx=-1, use_current=true) {
         const res = Queue.createEmbed(this.queue,
             '', 
             '', 
-            this.current,
+            use_current ? this.current : -1,
             page_idx
         )
         if (res.embed) {
             res.embed = res.embed.setTitle(`Queue ${this.name || '[Unnamed]'}`)
-            res.embed = res.embed.setDescription(`page ${page_idx + 1}/${res.num_pages} | #${this.current + 1} now playing\n⠀`)
+            res.embed = res.embed.setDescription(`page ${page_idx + 1}/${res.num_pages}` + (use_current ? ` | #${this.current + 1} now playing\n⠀` : ''))
         }
         return res
     }
@@ -186,6 +186,19 @@ class Queue extends EventEmitter {
 
     get autoplay_on() {
         return this.autoplay != this.AUTOPLAY_MODES.AUTOPLAY_OFF
+    }
+
+    get db_queue() {
+        const queue = this.queue.map(song => {
+            const {...obj} = song
+            return obj
+        })
+        return {
+            queue,
+            name: this.name,
+            loop: this.loop,
+            autoplay: this.autoplay,
+        }
     }
 }
 

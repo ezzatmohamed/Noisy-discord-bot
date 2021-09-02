@@ -12,8 +12,6 @@ module.exports = {
 
         let board_size = /(\d+)/.exec(args)
         board_size = board_size ? parseInt(board_size[1]) : 3
-
-        console.log(opponent, board_size)
         
         // TODO: variable board size (larger than 3 the ai engine hangs out)
         if (board_size < 3 || board_size > 3) {
