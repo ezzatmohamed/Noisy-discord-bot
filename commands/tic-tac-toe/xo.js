@@ -6,9 +6,9 @@ module.exports = {
 
     handler: async (message, args, session, bot, verbose=true) => {
 
-        let opponent = /<@!(\d{18})>/.exec(args)
+        let opponent = /<@!?(\d{18})>/.exec(args)
         opponent = opponent ? opponent[1] : 'ai'
-        args = args.replace(`<@!${opponent}>`, '') 
+        args = args.replace(new RegExp(`<@!?${opponent}>`), '')
 
         let board_size = /(\d+)/.exec(args)
         board_size = board_size ? parseInt(board_size[1]) : 3
