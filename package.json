@@ -11,7 +11,7 @@
     "discord-buttons": "^3.2.1",
     "discord-player": "^4.1.4",
     "discord-reply": "^0.1.2",
-    "discord-ytdl-core": "^4.1.0",
+    "discord-ytdl-core": "^5.0.4",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "ffmpeg-static": "^4.4.0",
