@@ -11,7 +11,15 @@ const MessagesController = require('./messages')
  * * Create the bot
  */
 require('discord-reply')
-const bot = new Discord.Client()
+const bot = new Discord.Client({
+    intents: [
+      Discord.GatewayIntentBits.DirectMessages,
+      Discord.GatewayIntentBits.Guilds,
+      Discord.GatewayIntentBits.GuildBans,
+      Discord.GatewayIntentBits.GuildMessages,
+      Discord.GatewayIntentBits.MessageContent,
+    ]
+})
 require('discord-buttons')(bot)
 bot.MessagesController = new MessagesController(bot)
 bot.SessionsController = new SessionsController(bot)

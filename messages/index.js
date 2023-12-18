@@ -11,6 +11,7 @@ class MessagesController {
         const regex = ` *(${escapeRegExp(process.env.PREFIX)}) *([^ ]+) *(.*)`
 
         this.bot.on('message', async(message) => {
+            console.log(message)
             if (!message.guild) return
             if (message.author.bot) return
             if (message.content.indexOf(process.env.PREFIX) !== 0) return
